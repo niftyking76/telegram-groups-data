@@ -1,43 +1,36 @@
 name: Update Groups JSON
 
 on:
-workflow_dispatch:
+  workflow_dispatch:
 
 permissions:
-contents: write
+  contents: write
 
 jobs:
-update-groups:
-runs-on: ubuntu-latest
+  update-groups:
+    runs-on: ubuntu-latest
 
-```
-steps:
-  - name: Checkout repository
-    uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-  - name: Setup Python
-    uses: actions/setup-python@v5
-    with:
-      python-version: "3.11"
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-  - name: Install dependencies
-    run: |
-      pip install psycopg2-binary
+      - name: Install dependency
+        run: pip install psycopg2-binary
 
-  - name: Run export script
-    env:
-      DB_URL: ${{ secrets.DB_URL }}
-    run: |
-      python export_groups.py
+      - name: Run export script
+        env:
+          DB_URL: ${{ secrets.DB_URL }}
+        run: python export_groups.py
 
-  - name: Commit and push groups.json
-    run: |
-      git config --global user.name "github-actions[bot]"
-      git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-      git add groups.json
-
-      git commit -m "Auto update groups.json" || echo "No changes to commit"
-
-      git push
-```
+      - name: Commit and push groups.json
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add groups.json
+          git commit -m "Auto update groups.json" || echo "No changes to commit"
+          git push
