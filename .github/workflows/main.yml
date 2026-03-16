@@ -1,0 +1,35 @@
+name: Update Groups JSON
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update-groups:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install psycopg2-binary
+
+      - name: Run export script
+        env:
+          DB_URL: ${{ secrets.DB_URL }}
+        run: |
+          python export_groups.py
+
+      - name: Commit updated JSON
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          git add groups.json
+          git commit -m "Auto update groups.json" || echo "No changes"
+          git push
